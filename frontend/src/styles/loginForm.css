@@ -1,0 +1,37 @@
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Botón */
+.login-button {
+  background-color: #ff4384;
+  padding: 12px;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.25s;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background-color: #d3346c;
+}
+
+/* Link recuperar contraseña */
+.login-recover {
+  display: block;
+  margin-top: 10px;
+  color: #265eab;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.25s;
+}
+
+.login-recover:hover {
+  text-decoration: underline;
+}

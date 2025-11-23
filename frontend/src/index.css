@@ -1,0 +1,11 @@
+/* Reset básico: NO afecta tu diseño */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Opcional: tipografía global ligera */
+body {
+  font-family: system-ui, Arial, sans-serif;
+}

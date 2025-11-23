@@ -1,0 +1,130 @@
+/* ---- CONTENEDOR PRINCIPAL ---- */
+.dash-container {
+  display: flex;
+  height: 100vh;
+  background-color: #F5F7FA; /* gris institucional */
+}
+
+/* ---- SIDEBAR ---- */
+.sidebar {
+  width: 260px;
+  background-color: #0A2538;   /* Azul petróleo */
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+}
+
+.sidebar-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+/* Links del Sidebar */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 17px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  transition: 0.25s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Iconos del sidebar */
+.sidebar-link img {
+  width: 22px;
+  filter: brightness(100);
+}
+
+/* ---- NAVBAR SUPERIOR ---- */
+.navbar {
+  height: 70px;
+  background-color: #EF3E71; /* Fucsia institucional */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  color: white;
+}
+
+/* Contenedor izquierdo del navbar */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Logo */
+.navbar-logo {
+  height: 45px;
+  width: auto;
+}
+
+
+/* Título */
+.navbar-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Usuario */
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+/* ---- CONTENIDO PRINCIPAL ---- */
+.dash-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 50px;              /* margen general */
+
+}
+
+.dash-page {
+  flex: 1;
+  padding: 30px;
+  background-color: #F5F7FA;
+}
+
+.dash-inner {
+  max-width: 1200px;               /* evita desbordes */
+  margin: 0 auto;                  /* centra horizontalmente */
+  width: 100%;
+}
+
+.page-title {
+  font-size: 30px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.page-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  border: 1px solid #E5E7EB;
+}

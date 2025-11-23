@@ -1,0 +1,42 @@
+/* Contenedor general */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 25px;
+}
+
+/* Label */
+.input-label {
+  font-size: 15px;
+  color: #E8D4C0;
+  margin-bottom: 8px;
+}
+
+/* WRAPPER para input + ícono */
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Estilo del input tipo línea */
+.input-line {
+  width: 100%;
+  padding: 10px 40px 10px 0; /* deja espacio para el icono */
+  border: none;
+  border-bottom: 2px solid #265eab;
+  font-size: 18px;
+  outline: none;
+  background-color: transparent;
+  color: #000000;
+}
+
+/* Icono alineado a la derecha */
+.input-icon-right {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  opacity: 0.8;
+}
