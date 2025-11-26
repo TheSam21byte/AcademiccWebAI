@@ -35,7 +35,7 @@ CREATE TABLE Cursos (
     id_curso INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     creditos INT NOT NULL CHECK (creditos IN (2,3,4)),
-    silabo LONGTEXT
+    silabo VARCHAR(200)
 );
 
 -- 2. MALLA CURRICULAR
@@ -64,19 +64,6 @@ CREATE TABLE Estudiantes (
 
 -- 4. OPERACIONES (Aquí agregamos el vínculo con Periodos)
 
-CREATE TABLE Trabajos (
-    id_trabajo INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    descripcion TEXT,
-    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-    curso_id INT NOT NULL,
-    docente_id INT NOT NULL,
-    periodo_id INT NOT NULL, -- [NUEVO] Vinculamos al periodo
-    FOREIGN KEY (curso_id) REFERENCES Cursos(id_curso),
-    FOREIGN KEY (docente_id) REFERENCES Docentes(id_docente),
-    FOREIGN KEY (periodo_id) REFERENCES Periodos(id_periodo) -- Relación creada
-);
-
 CREATE TABLE Asistencias (
     id_asistencia INT AUTO_INCREMENT PRIMARY KEY,
     estudiante_id INT NOT NULL,
@@ -87,16 +74,6 @@ CREATE TABLE Asistencias (
     FOREIGN KEY (estudiante_id) REFERENCES Estudiantes(id_estudiante),
     FOREIGN KEY (curso_id) REFERENCES Cursos(id_curso),
     FOREIGN KEY (periodo_id) REFERENCES Periodos(id_periodo) -- Relación creada
-);
-
-CREATE TABLE Notas (
-    id_nota INT AUTO_INCREMENT PRIMARY KEY,
-    trabajo_id INT NOT NULL,
-    estudiante_id INT NOT NULL,
-    nota DECIMAL(5,2),
-    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (trabajo_id) REFERENCES Trabajos(id_trabajo),
-    FOREIGN KEY (estudiante_id) REFERENCES Estudiantes(id_estudiante)
 );
 
 CREATE TABLE Curso_Unidades (
