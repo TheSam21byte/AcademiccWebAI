@@ -1,4 +1,3 @@
-import React from "react";
 import userIcon from "../assets/assets-login/user.svg";
 import passIcon from "../assets/assets-login/pass.svg";
 import "../styles/input.css";
