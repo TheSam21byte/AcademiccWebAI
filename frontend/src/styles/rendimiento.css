@@ -1,0 +1,77 @@
+/* ... (Estilos de Metric Card y Recomendaciones se mantienen) ... */
+
+/* ======================================= */
+/* ---- NUEVA SECCIÓN: RENDIMIENTO POR CURSO ---- */
+/* ======================================= */
+
+.course-performance-grid {
+    display: grid;
+    /* 3 columnas en pantallas grandes */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.course-performance-card {
+    padding: 25px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    border-top: 8px solid transparent; /* Reserva espacio para el borde superior de color */
+    
+    /* Efecto de profundización al pasar el mouse */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+}
+
+.course-performance-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.course-performance-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 20px;
+    /* El color se establece dinámicamente en JSX */
+}
+
+.performance-metrics p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 8px 0;
+}
+
+.performance-metrics strong {
+    color: #333;
+}
+
+.details-button-area {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.btn-details {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    background-color: #0A2538; /* Azul petróleo */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-details:hover {
+    background-color: #1c3e59;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .course-performance-grid {
+    grid-template-columns: 1fr; /* Una columna en tablets */
+  }
+}

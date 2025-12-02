@@ -1,18 +1,89 @@
-/* ---- CONTENEDOR PRINCIPAL ---- */
-.dash-container {
+/* ======================================= */
+/* ---- NAVBAR SUPERIOR (FULL WIDTH Y FIJO) ---- */
+/* ======================================= */
+.navbar {
+  /* CAMBIOS CLAVE: FIJAR Y OCUPAR EL 100% SUPERIOR */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: #EF3E71; /* Fucsia institucional */
   display: flex;
-  height: 100vh;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  color: white;
+  z-index: 1000; /* Asegura que esté por encima de todo */
+}
+
+/* Contenedor izquierdo del navbar */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Logo */
+.navbar-logo {
+  height: 45px;
+  width: auto;
+}
+
+/* Título */
+.navbar-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Usuario */
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+
+/* ======================================= */
+/* ---- CONTENEDOR PRINCIPAL Y LAYOUT ---- */
+/* ======================================= */
+.dash-container {
+  /* CLAVE: Añadir padding superior para que el contenido empiece debajo del navbar fijo */
+  padding-top: 70px; /* La altura del navbar */
+  
+  /* Contenedor Flex para la división Sidebar | Contenido */
+  display: flex;
+  height: auto;
+  min-height: 100vh;
   background-color: #F5F7FA; /* gris institucional */
 }
 
-/* ---- SIDEBAR ---- */
+/* ======================================= */
+/* ---- SIDEBAR (FIJO PARA SCROLL INTERNO) ---- */
+/* ======================================= */
 .sidebar {
   width: 260px;
-  background-color: #0A2538;   /* Azul petróleo */
+  background-color: #0A2538;  /* Azul petróleo */
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  padding: 30px 20px;
+  
+  padding: 30px 20px; 
+  
+  /* CLAVE: Hacer el sidebar sticky para que se quede visible al hacer scroll */
+  position: sticky; 
+  top: 70px; /* Se ancla justo debajo del navbar (70px) */
+  align-self: flex-start; /* Ayuda a que sticky funcione en flexbox */
+  
+  /* El sidebar puede ocupar toda la altura restante de la ventana, o toda la altura del contenido */
+  height: calc(100vh - 70px); 
+  overflow-y: auto; /* Permite scroll interno si es necesario */
 }
 
 .sidebar-title {
@@ -34,15 +105,26 @@
   font-size: 17px;
   padding: 10px 12px;
   border-radius: 6px;
-  transition: 0.25s;
+  transition: 0.25s ease; 
   display: flex;
   align-items: center;
   gap: 12px;
+  
+  border: 2px solid transparent; 
 }
 
+/* Estado al pasar el cursor (Hover) */
 .sidebar-link:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: rgba(255, 255, 255, 0.05); 
+  border: 2px solid #EF3E71; 
 }
+
+/* Estado ACTIVO */
+.sidebar-link.active {
+  background-color: rgba(255, 255, 255, 0.15); 
+  border: 2px solid #EF3E71; 
+}
+
 
 /* Iconos del sidebar */
 .sidebar-link img {
@@ -50,57 +132,17 @@
   filter: brightness(100);
 }
 
-/* ---- NAVBAR SUPERIOR ---- */
-.navbar {
-  height: 70px;
-  background-color: #EF3E71; /* Fucsia institucional */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-  color: white;
-}
-
-/* Contenedor izquierdo del navbar */
-.navbar-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-/* Logo */
-.navbar-logo {
-  height: 45px;
-  width: auto;
-}
-
-
-/* Título */
-.navbar-title {
-  font-size: 22px;
-  font-weight: 700;
-}
-
-/* Usuario */
-.navbar-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.navbar-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}
-
-/* ---- CONTENIDO PRINCIPAL ---- */
+/* ======================================= */
+/* ---- CONTENIDO PRINCIPAL Y PÁGINA ---- */
+/* ======================================= */
 .dash-content {
+  /* Ya NO necesita margin-left */
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 40px 50px;              /* margen general */
-
+  
+  /* Se eliminó el padding-top innecesario */
+  padding: 40px 50px 40px 50px; 
 }
 
 .dash-page {
@@ -110,11 +152,12 @@
 }
 
 .dash-inner {
-  max-width: 1200px;               /* evita desbordes */
-  margin: 0 auto;                  /* centra horizontalmente */
+  max-width: 1200px; 
+  margin: 0 auto; 
   width: 100%;
 }
 
+/* Estilos de la página */
 .page-title {
   font-size: 30px;
   color: #333;
@@ -127,4 +170,118 @@
   border-radius: 10px;
   margin-top: 20px;
   border: 1px solid #E5E7EB;
+}
+
+
+/* SECCIÓN DESCRIPTIVA (Texto de M.I.Y.A.B.I) */
+.description-section {
+  max-width: 100%;
+  margin: 20px 0 40px 0;
+  padding: 25px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #E5E7EB;
+}
+
+.description-section strong {
+  color: #0A2538; 
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.1em;
+}
+
+.section-subtitle {
+  text-align: left;
+  color: #0A2538; 
+  margin-top: 40px;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+
+
+/* ======================================= */
+/* ---- ESTILOS DE TARJETAS Y GRID ---- */
+/* ======================================= */
+
+/* 1. Contenedor Grid */
+.feature-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px; 
+  margin-bottom: 50px;
+}
+
+/* 2. Estilo de la Tarjeta */
+.feature-card {
+  background-color: #ffffff;
+  border-radius: 10px; 
+  padding: 30px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); 
+  border: 1px solid #E5E7EB;
+  
+  /* Animación de hover y aparición */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  
+  /* Configuración inicial para la animación de aparición */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.5s forwards;
+}
+
+/* 3. Animación de Hover (usando el color Fucsia institucional) */
+.feature-card:hover {
+  transform: translateY(-8px); 
+  box-shadow: 0 15px 25px rgba(239, 62, 113, 0.4); 
+  border-color: #EF3E71; 
+  cursor: pointer;
+}
+
+.card-icon {
+  font-size: 3.2rem;
+  margin-bottom: 15px;
+  line-height: 1; 
+}
+
+.card-title {
+  color: #0A2538; 
+  margin-top: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.card-description {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* 4. Keyframe para Animación de Aparición (Fade-In) */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 5. Responsive Design */
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+    width: 0; 
+  }
+  
+  .dash-container {
+    padding-top: 70px; /* Mantener espacio para el navbar fijo */
+  }
+
+  .dash-content {
+    margin-left: 0; 
+    padding: 20px; /* Ajuste de padding en móvil */
+  }
+  
+  .feature-cards-grid {
+    grid-template-columns: 1fr; 
+  }
 }
