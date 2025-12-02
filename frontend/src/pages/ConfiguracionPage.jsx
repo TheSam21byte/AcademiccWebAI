@@ -27,16 +27,13 @@ function SettingSwitch({ label, description, initialState }) {
 /* Componente principal de la página */
 export default function ConfiguracionPage() {
     const [userName, setUserName] = useState('Alexander');
-    const [userEmail, setUserEmail] = useState('alexander@academicweb.ai');
+    const [userEmail] = useState('alexander@academicweb.ai');
 
     return (
         <>
             <h2 className="page-title">Configuración de Cuenta y Asistencia</h2>
             <p className="page-text">Administra tu perfil, preferencias de notificación y ajustes de M.I.Y.A.B.I.</p>
 
-            /* =========================================== */
-            /* 1. Perfil y Cuenta */
-            /* =========================================== */
             <div className="config-card page-card">
                 <h3 className="config-section-title">👤 Perfil y Cuenta</h3>
                 
@@ -68,9 +65,6 @@ export default function ConfiguracionPage() {
             </div>
 
             
-            /* =========================================== */
-            /* 2. Preferencias de Notificación */
-            /* =========================================== */
             <div className="config-card page-card">
                 <h3 className="config-section-title">🔔 Preferencias de Notificación</h3>
                 
@@ -93,9 +87,6 @@ export default function ConfiguracionPage() {
                 />
             </div>
 
-            /* =========================================== */
-            /* 3. Configuración del Asesor IA (M.I.Y.A.B.I.) */
-            /* =========================================== */
             <div className="config-card page-card">
                 <h3 className="config-section-title">🧠 Asistencia IA (M.I.Y.A.B.I.)</h3>
                 
