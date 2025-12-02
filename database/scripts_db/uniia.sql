@@ -33,9 +33,11 @@ CREATE TABLE Docentes (
 
 CREATE TABLE Cursos (
     id_curso INT AUTO_INCREMENT PRIMARY KEY,
+    id_docente INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     creditos INT NOT NULL CHECK (creditos IN (2,3,4)),
-    silabo VARCHAR(200)
+    silabo VARCHAR(200),
+    FOREIGN KEY (id_docente) REFERENCES Docentes(id_docente)
 );
 
 -- 2. MALLA CURRICULAR
