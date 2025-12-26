@@ -5,11 +5,11 @@ from core.database import engine
 from api.router import api_router
 
 app = FastAPI(
-    docs_url=None,
-    redoc_url=None,
-    openapi_url=None
+    title="AcademicWeb AI - M.I.Y.A.B.I.",
+    description="Plataforma Inteligente de Asesoría Académica",
+    version="1.0.0"
+    # Al quitar los None, FastAPI activará las rutas por defecto
 )
-
 @app.get("/health/db")
 def check_db():
     try:

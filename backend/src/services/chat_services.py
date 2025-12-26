@@ -1,54 +1,75 @@
+import os
+import google.generativeai as genai
+from core.config import settings
+
+# Limpieza de entorno para asegurar el uso de API KEY
+if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
+    del os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+
+genai.configure(api_key=settings.GEMINI_API_KEY)
+
 def build_prompt(user_message: str, academic_record: dict | None = None) -> str:
-    """
-    Construye el prompt que se enviaría a Gemini.
-    Por ahora sirve para mantener la estructura lista.
-    """
-    if not academic_record:
-        return f"Usuario: {user_message}\nAsistente:"
+    estudiante = academic_record.get("estudiante", {}) if academic_record else {}
+    cursos = academic_record.get("cursos", []) if academic_record else []
+    
+    nombre = estudiante.get('nombre', 'Estudiante')
+    carrera = estudiante.get('carrera', 'tu carrera')
+    
+    cursos_txt = "\n".join([
+        f"- {c['nombre']}: Nota {c['promedio_final']} ({c['estado']})" 
+        for c in cursos
+    ])
 
-    # Contexto mínimo (puedes enriquecerlo luego)
-    estudiante = academic_record.get("estudiante", {})
-    cursos = academic_record.get("cursos", [])
+    # Si es el primer mensaje del sistema
+    if user_message == "/start_greeting":
+        return f"""
+Eres MIYABI, un asesor académico experto y amable. 
+El estudiante {nombre} de la carrera de {carrera} acaba de entrar al chat.
 
-    cursos_txt = "\n".join(
-        [f"- {c['nombre']} (estado: {c['estado']}, promedio: {c['promedio_final']})" for c in cursos]
-    )
-
-    prompt = f"""
-Eres MIYABI, un asesor académico.
-Estudiante: {estudiante.get('nombre')} ({estudiante.get('codigo')})
-Carrera: {estudiante.get('carrera')}
-Periodo: {academic_record.get('periodo')}
-
-Cursos:
+Tu tarea es:
+1. Saludarlo cálidamente por su nombre.
+2. Hacer un resumen rápido de su situación actual basado en estos datos:
 {cursos_txt}
 
-Pregunta del estudiante: {user_message}
+3. Si tiene notas bajas (menores a 11 o 12), anímalo. Si va bien, felicítalo.
+4. Termina preguntando en qué curso específico desea ayuda hoy.
 
-Responde de forma clara y breve, con recomendaciones accionables.
+Sé breve, profesional y motivador. No inventes datos que no estén en la lista.
 """.strip()
 
-    return prompt
+    # Prompt normal para el resto de la conversación
+    return f"""
+Eres MIYABI. Estudiante: {nombre}. 
+Datos académicos:
+{cursos_txt}
 
+Pregunta del usuario: {user_message}
+Responde de forma concisa.
+""".strip()
+async def get_ai_answer(user_message: str, academic_record: dict | None = None) -> str:
+    final_prompt = build_prompt(user_message, academic_record)
+    
+    try:
+        # --- LÓGICA DE AUTO-DETECCIÓN ---
+        # Listamos los modelos para ver cuáles tienes permitidos
+        available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        
+        if not available_models:
+            return "Error: No se encontraron modelos disponibles para esta API Key."
 
-def simple_mock_answer(user_message: str, academic_record: dict | None = None) -> str:
-    """
-    Respuesta mock (sin IA) para validar frontend/back.
-    """
-    msg = user_message.lower().strip()
+        # Elegimos el modelo más moderno de tu lista (priorizando flash)
+        # Si 'gemini-1.5-flash' está en tu lista, lo usará.
+        selected_model = next((m for m in available_models if "1.5-flash" in m), available_models[0])
+        
+        print(f"DEBUG: Usando el modelo detectado: {selected_model}")
 
-    if academic_record:
-        # Ejemplo: si pregunta por "cursos"
-        if "cursos" in msg or "llevo" in msg:
-            cursos = academic_record.get("cursos", [])
-            nombres = [c["nombre"] for c in cursos]
-            return f"Estás llevando {len(nombres)} cursos: " + ", ".join(nombres)
-
-        # Ejemplo: si menciona un curso por nombre parcial
-        cursos = academic_record.get("cursos", [])
-        for c in cursos:
-            if c["nombre"].lower() in msg:
-                return (f"En {c['nombre']} tu estado es {c['estado']} con promedio final "
-                        f"{c['promedio_final']}. ¿Quieres ver el detalle por unidades?")
-
-    return "Te leo 👀. ¿Tu duda es sobre cursos, notas, unidades o tu promedio?"
+        model = genai.GenerativeModel(selected_model)
+        response = model.generate_content(final_prompt)
+        
+        if response and response.text:
+            return response.text
+        return "MIYABI recibió el mensaje pero no pudo generar texto."
+        
+    except Exception as e:
+        print(f"DEBUG ERROR: {str(e)}")
+        return f"Error de configuración: {str(e)}"
