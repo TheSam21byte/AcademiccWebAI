@@ -1,17 +1,119 @@
 import os
+import re
+import unicodedata
+from pypdf import PdfReader
 import google.generativeai as genai
 from core.config import settings
 
-# Limpieza de entorno para asegurar el uso de API KEY
+# --- CONFIGURACIÓN INICIAL ---
 if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
     del os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
 
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
+# --- NUEVAS FUNCIONES PARA LEER SÍLABOS ---
+
+def normalize_text(text: str) -> str:
+    """
+    Función maestra de normalización:
+    1. Quita tildes y convierte Ñ -> N.
+    2. Elimina caracteres no alfanuméricos.
+    3. Todo a mayúsculas.
+    """
+    if not text:
+        return ""
+    # Quitar tildes y normalizar Ñ
+    text = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('utf-8')
+    # Mayúsculas y quitar basura
+    text = text.upper().strip()
+    # Reemplazar espacios por guiones bajos para estandarizar
+    text = re.sub(r'[^A-Z0-9]+', '_', text)
+    return text.strip('_')
+
+def get_syllabus_text(periodo: str, courses: list) -> str:
+    """
+    Busca los PDFs con una lógica de coincidencia flexible y un mapeo manual de emergencia.
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__)) 
+    project_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..")) 
+    base_path = os.path.join(project_root, "database", f"S{periodo}")
+    
+    # --- MAPEO MANUAL DE EMERGENCIA ---
+    # Esto asegura que si la búsqueda automática falla por caracteres especiales, se encuentre el archivo.
+    MAPEO_MANUAL = {
+        "DISEÑO PARA INGENIERIA": "DISEÑO.pdf",
+        "SOCIOLOGIA RURAL Y AMAZONICA": "SOCIOLOGIA.pdf",
+        "ALGORITMOS Y PROGRAMACIÓN": "ALGORITMOS.pdf"
+    }
+
+    combined_text = ""
+    
+    if not os.path.exists(base_path):
+        print(f"DEBUG ERROR: No se encontró la carpeta en {base_path}")
+        return "" 
+
+    try:
+        archivos_en_carpeta = os.listdir(base_path)
+    except Exception as e:
+        print(f"Error accediendo a la carpeta: {e}")
+        return ""
+
+    for course in courses:
+        nombre_curso_bd = course['nombre']
+        target_pdf = None
+
+        # 1. INTENTO POR MAPEO MANUAL (Prioridad para evitar errores de tildes/eñes)
+        if nombre_curso_bd.upper() in MAPEO_MANUAL:
+            posible_path = os.path.join(base_path, MAPEO_MANUAL[nombre_curso_bd.upper()])
+            if os.path.exists(posible_path):
+                target_pdf = posible_path
+
+        # 2. BÚSQUEDA INTELIGENTE (Si no está en el mapa manual)
+        if not target_pdf:
+            curso_clean = normalize_text(nombre_curso_bd)
+            primera_palabra_curso = curso_clean.split("_")[0]
+
+            for archivo in archivos_en_carpeta:
+                if not archivo.lower().endswith(".pdf"):
+                    continue
+                
+                nombre_archivo_base = archivo.rsplit('.', 1)[0]
+                archivo_clean = normalize_text(nombre_archivo_base)
+                
+                if (archivo_clean == curso_clean or 
+                    archivo_clean == primera_palabra_curso or 
+                    archivo_clean in curso_clean or
+                    curso_clean.startswith(archivo_clean)):
+                    
+                    target_pdf = os.path.join(base_path, archivo)
+                    break
+
+        # LECTURA DEL PDF ENCONTRADO
+        if target_pdf:
+            try:
+                reader = PdfReader(target_pdf)
+                text = ""
+                for page in reader.pages[:3]: 
+                    content = page.extract_text()
+                    if content:
+                        text += content + "\n"
+                
+                combined_text += f"\n--- SÍLABO DETECTADO: {nombre_curso_bd} ---\n{text}\n"
+                print(f"DEBUG: PDF detectado y leído con éxito: {os.path.basename(target_pdf)}")
+            except Exception as e:
+                print(f"DEBUG ERROR: Error leyendo {target_pdf}: {e}")
+        else:
+            print(f"DEBUG: No se pudo localizar el PDF para: {nombre_curso_bd}")
+
+    return combined_text
+
+# --- LÓGICA DEL PROMPT ---
+
 def build_prompt(user_message: str, academic_record: dict | None = None) -> str:
     estudiante = academic_record.get("estudiante", {}) if academic_record else {}
     cursos = academic_record.get("cursos", []) if academic_record else []
     
+    periodo_actual = "2022-2"
     nombre = estudiante.get('nombre', 'Estudiante')
     carrera = estudiante.get('carrera', 'tu carrera')
     
@@ -20,24 +122,32 @@ def build_prompt(user_message: str, academic_record: dict | None = None) -> str:
         for c in cursos
     ])
 
-    # Si es el primer mensaje del sistema
+    silabos_txt = ""
+    if user_message == "/start_greeting":
+        silabos_txt = get_syllabus_text(periodo_actual, cursos)
+
     if user_message == "/start_greeting":
         return f"""
-Eres MIYABI, un asesor académico experto y amable. 
+Eres MIYABI, un asesor académico experto y muy atento de la universidad. 
 El estudiante {nombre} de la carrera de {carrera} acaba de entrar al chat.
 
-Tu tarea es:
-1. Saludarlo cálidamente por su nombre.
-2. Hacer un resumen rápido de su situación actual basado en estos datos:
+TUS DATOS OFICIALES:
+Notas actuales:
 {cursos_txt}
 
-3. Si tiene notas bajas (menores a 11 o 12), anímalo. Si va bien, felicítalo.
-4. Termina preguntando en qué curso específico desea ayuda hoy.
+CONTENIDO TÉCNICO DE LOS SÍLABOS (Extraído de PDFs):
+{silabos_txt}
 
-Sé breve, profesional y motivador. No inventes datos que no estén en la lista.
+TU TAREA OBLIGATORIA:
+1. Saluda a {nombre} cálidamente por su nombre.
+2. Resume su situación académica actual mencionando explícitamente sus notas.
+3. Para cada curso con nota baja (menor a 12), analiza el contenido del SÍLABO que te proporcioné y dile qué temas específicos debe priorizar para mejorar el promedio.
+4. Si el sílabo de un curso fue detectado, SE MUY ESPECÍFICO con los temas que mencionas.
+5. Mantén un tono empático, motivador y profesional.
+
+Sé conciso pero muy informativo.
 """.strip()
 
-    # Prompt normal para el resto de la conversación
     return f"""
 Eres MIYABI. Estudiante: {nombre}. 
 Datos académicos:
@@ -46,25 +156,28 @@ Datos académicos:
 Pregunta del usuario: {user_message}
 Responde de forma concisa.
 """.strip()
-async def get_ai_answer(user_message: str, academic_record: dict | None = None) -> str:
+
+# --- CONEXIÓN CON IA ---
+async def get_ai_answer(user_message: str, academic_record: dict | None = None, history: list = None) -> str:
+    """
+    history: lista de mensajes previos enviada por el frontend.
+    Formato esperado: [{"role": "user", "parts": ["..."]}, {"role": "model", "parts": ["..."]}]
+    """
+    # 1. Generamos el prompt (que incluye los datos académicos y sílabos)
     final_prompt = build_prompt(user_message, academic_record)
     
     try:
-        # --- LÓGICA DE AUTO-DETECCIÓN ---
-        # Listamos los modelos para ver cuáles tienes permitidos
         available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        
-        if not available_models:
-            return "Error: No se encontraron modelos disponibles para esta API Key."
-
-        # Elegimos el modelo más moderno de tu lista (priorizando flash)
-        # Si 'gemini-1.5-flash' está en tu lista, lo usará.
         selected_model = next((m for m in available_models if "1.5-flash" in m), available_models[0])
         
-        print(f"DEBUG: Usando el modelo detectado: {selected_model}")
-
         model = genai.GenerativeModel(selected_model)
-        response = model.generate_content(final_prompt)
+        
+        # 2. INICIAMOS EL CHAT CON EL HISTORIAL RECIBIDO
+        # Si history es None, empieza vacío.
+        chat = model.start_chat(history=history or [])
+        
+        # 3. ENVIAMOS EL MENSAJE ACTUAL
+        response = chat.send_message(final_prompt)
         
         if response and response.text:
             return response.text
