@@ -132,6 +132,33 @@
   filter: brightness(100);
 }
 
+/* Contenedor al fondo */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 15px;
+}
+
+.logout-button-sidebar {
+  background: none;
+  border: 2px solid transparent; /* Transparente por defecto */
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  
+  /* COLOR INACTIVO: Un blanco suave/grisáceo */
+  color: #ffffff; 
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+/* EFECTO AL PASAR EL MOUSE (HOVER) */
+.logout-button-sidebar:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid #EF3E71; /* Aparece el borde rosa */
+  color: #ffffff; /* El texto se aclara a blanco puro */
+}
+
 /* ======================================= */
 /* ---- CONTENIDO PRINCIPAL Y PÁGINA ---- */
 /* ======================================= */

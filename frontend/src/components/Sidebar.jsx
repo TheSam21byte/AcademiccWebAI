@@ -1,24 +1,23 @@
 import "../styles/dashboard.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
-  // Función para determinar las clases del NavLink
-  // 'isActive' es proporcionada automáticamente por NavLink
+  const navigate = useNavigate();
+
   const getNavLinkClass = ({ isActive }) => {
-    // Si isActive es true, añade la clase 'active' a 'sidebar-link'
-    // De lo contrario, solo usa 'sidebar-link'
     return isActive ? "sidebar-link active" : "sidebar-link";
+  };
+
+  const handleLogout = () => {
+    // 1. Limpiamos el almacenamiento local
+    localStorage.clear();
+    // 2. Redirigimos al Login
+    navigate("/");
   };
 
   return (
     <aside className="sidebar">
-
-      {/* <h2 className="sidebar-title">M.I.Y.A.B.I</h2> */}
-
       <nav className="sidebar-nav">
-        {/* Usamos la función 'getNavLinkClass' en lugar de la clase estática */}
-        
-        {/* NOTA: Usa 'end' en el enlace raíz para que no esté activo en todas las subrutas */}
         <NavLink to="/dashboard" className={getNavLinkClass} end>
           Inicio
         </NavLink>
@@ -30,7 +29,7 @@ export default function Sidebar() {
         <NavLink to="/dashboard/rendimiento" className={getNavLinkClass}>
           Mi Rendimiento
         </NavLink>
-    
+
         <NavLink to="/dashboard/chat" className={getNavLinkClass}>
           Asesor IA
         </NavLink>
@@ -40,6 +39,15 @@ export default function Sidebar() {
         </NavLink>
       </nav>
 
+      {/* Botón de Salir al final del Sidebar */}
+      <div className="sidebar-footer">
+        <button
+          onClick={handleLogout}
+          className="sidebar-link logout-button-sidebar"
+        >
+          Salir
+        </button>
+      </div>
     </aside>
   );
 }
