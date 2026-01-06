@@ -1,6 +1,6 @@
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from models.student import Student
+from src.models.student import Student
 
 def get_academic_record_by_student(
     db: Session, 

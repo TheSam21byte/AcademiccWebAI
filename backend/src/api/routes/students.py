@@ -1,18 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from core.dependencies import get_db, get_current_student
-
+from src.core.dependencies import get_db, get_current_student
 # DAO: Acceso a datos
 
 from repositories.student_repository import (
     get_academic_record_by_student
 )
-from services.student_service import (
+from src.services.student_service import (
     transform_academic_record,
-    get_student_basic_info,            
+    get_student_dashboard,
     get_student_courses,
-    get_student_course_detail,
-    get_student_dashboard
+    get_student_basic_info, # <--- Verifica que esté escrita IGUAL en el service
+    get_student_course_detail
 )
 
 def _get_academic_record(db: Session, student_id: int):

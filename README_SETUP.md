@@ -120,3 +120,25 @@ Luego se sube solo requirements.txt.
 ✔ Hacer pull antes de comenzar a trabajar
 ✔ No subir archivos generados automáticamente
 ✔ Mantener estructura organizada
+
+
+
+
+
+
+
+
+
+
+
+
+
+**** cambios realiazados
+
+-Modificaciones en services auth, students,
+-Modificacion en main --- tambien moverlo a la raiz central de backend
+-Realizar una copia de venv en el backend
+-Modificaciones en routes como auth y students
+-
+-
+-

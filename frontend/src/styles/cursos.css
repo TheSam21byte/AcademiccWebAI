@@ -2,26 +2,34 @@
 /* ---- ESTILOS DE LA PÁGINA MIS CURSOS ---- */
 /* ======================================= */
 
+.cursos-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 /* Contenedor Grid para los cursos */
 .courses-grid {
   display: grid;
-  /* Dos columnas en pantallas grandes */
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 30px;
   margin-top: 30px;
 }
 
-/* Estilo de la tarjeta de curso (hereda de .page-card definido en dashboard.css) */
+/* Estilo de la tarjeta de curso */
 .course-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
   padding: 25px;
-  /* Efecto de hover similar al de las features */
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
+  position: relative;
 }
 
 .course-card:hover {
   transform: translateY(-5px); 
-  box-shadow: 0 10px 20px rgba(239, 62, 113, 0.25); /* Sombra fucsia institucional */
+  box-shadow: 0 10px 20px rgba(239, 62, 113, 0.15);
   border-color: #EF3E71;
 }
 
@@ -33,15 +41,15 @@
 }
 
 .course-title {
-  color: #0A2538; /* Azul petróleo */
-  font-size: 1.5rem;
+  color: #0A2538;
+  font-size: 1.4rem;
   margin: 0;
   line-height: 1.2;
   font-weight: 700;
 }
 
 .course-code {
-  background-color: #F5F7FA; /* Gris claro */
+  background-color: #F5F7FA;
   color: #666;
   padding: 4px 8px;
   border-radius: 4px;
@@ -53,66 +61,251 @@
 .course-teacher {
   color: #777;
   font-size: 0.95rem;
-  margin-top: 0;
-  margin-bottom: 20px;
+  margin-top: 5px;
+  margin-bottom: 15px;
   font-style: italic;
 }
 
-/* -------------------- */
-/* BARRA DE PROGRESO */
-/* -------------------- */
+/* Barra de Progreso en Tarjeta */
 .progress-section {
-  margin-top: 15px;
   margin-bottom: 20px;
 }
 
-.progress-label {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 8px;
-}
-
 .progress-bar-container {
-  height: 10px;
+  height: 8px;
   background-color: #E0E0E0;
-  border-radius: 5px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
   transition: width 0.5s ease-out;
-  /* Color de fondo se establece en JSX */
 }
 
-.last-activity {
-  font-size: 0.85rem;
-  color: #888;
-  margin-bottom: 15px;
-}
-
-/* Botón de Acceso */
 .btn-access {
   display: block;
   width: 100%;
-  padding: 10px;
-  background-color: #EF3E71; /* Fucsia institucional */
+  padding: 12px;
+  background-color: #EF3E71;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.3s;
 }
 
 .btn-access:hover {
-  background-color: #d13764; /* Fucsia más oscuro al hover */
+  background-color: #d13764;
 }
 
-/* Media Query para una columna en móviles */
+/* ======================================= */
+/* --------- ESTILOS DEL MODAL ----------- */
+/* ======================================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 37, 56, 0.8); /* Azul petróleo translúcido */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.course-modal {
+  background: white;
+  width: 95%;
+  max-width: 500px;
+  max-height: 90vh;
+  border-radius: 20px;
+  padding: 30px;
+  position: relative;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #EF3E71;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-header h2 {
+  color: #0A2538;
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+/* Tarjeta de Unidad dentro del Modal */
+.unit-card {
+  border: 2.5px solid #EF3E71;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 25px 0;
+  position: relative;
+  background: #fff;
+}
+
+.unit-title-modal {
+  color: #EF3E71;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+/* Grid de Notas (Conceptual, Procedimental, Actitudinal) */
+.grades-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-right: 70px; /* Espacio para que el promedio no tape las notas */
+}
+
+.grade-item-modal {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 10px 5px;
+  flex: 1;
+}
+
+.grade-item-modal span {
+  font-size: 0.65rem;
+  color: #64748B;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.grade-item-modal p {
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin: 0;
+  color: #0A2538;
+}
+
+/* Badge de Promedio Flotante (Azul) */
+.unit-avg-badge {
+  position: absolute;
+  right: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0A2538;
+  color: white;
+  padding: 12px 8px;
+  border-radius: 10px;
+  width: 85px;
+  box-shadow: 5px 5px 15px rgba(10, 37, 56, 0.3);
+  text-align: center;
+}
+
+.unit-avg-badge span {
+  font-size: 0.6rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 2px;
+  opacity: 0.8;
+}
+
+.unit-avg-badge p {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* Footer del Modal */
+.modal-footer-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.final-score-text {
+  font-size: 1.1rem;
+  color: #0A2538;
+}
+
+.final-score-text strong {
+  color: #EF3E71;
+  font-size: 1.5rem;
+  margin-left: 10px;
+}
+
+.badge-status {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.badge-status.aprobado { background: #DCFCE7; color: #166534; }
+.badge-status.desaprobado { background: #FEE2E2; color: #991B1B; }
+
+/* Media Query */
 @media (max-width: 768px) {
-  .courses-grid {
-    grid-template-columns: 1fr;
-  }
+  .courses-grid { grid-template-columns: 1fr; }
+  .grades-container { margin-right: 0; margin-bottom: 60px; }
+  .unit-avg-badge { top: auto; bottom: -25px; right: 50%; transform: translateX(50%); flex-direction: row; width: 120px; }
+}
+
+.modal-footer-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.final-score-text {
+  font-size: 1.1rem;
+  color: #0A2538;
+  font-weight: 600;
+}
+
+.final-score-text strong {
+  color: #EF3E71; /* Fucsia para resaltar la nota */
+  font-size: 1.6rem;
+  margin-left: 10px;
+}
+
+/* Estilo base para el cuadro de estado */
+.status-box {
+  padding: 8px 20px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: white; /* Letras blancas siempre */
+  letter-spacing: 1px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Variante Verde (Aprobado) */
+.bg-success {
+  background-color: #28a745; /* Verde sólido */
+}
+
+/* Variante Roja (Desaprobado) */
+.bg-danger {
+  background-color: #dc3545; /* Rojo sólido */
 }
