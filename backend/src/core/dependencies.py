@@ -1,7 +1,7 @@
-from core.database import SessionLocal
+from src.core.database import SessionLocal
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from core.security import decode_access_token
+from src.core.security import decode_access_token
 
 security = HTTPBearer()
 

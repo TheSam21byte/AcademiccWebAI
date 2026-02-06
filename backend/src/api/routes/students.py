@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.core.dependencies import get_db, get_current_student
 # DAO: Acceso a datos
 
-from repositories.student_repository import (
+from src.repositories.student_repository import (
     get_academic_record_by_student
 )
 from src.services.student_service import (

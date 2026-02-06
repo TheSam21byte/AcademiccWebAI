@@ -3,7 +3,7 @@ import re
 import unicodedata
 from pypdf import PdfReader
 import google.generativeai as genai
-from core.config import settings
+from src.core.config import settings
 
 # --- CONFIGURACIÓN INICIAL ---
 if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
@@ -109,6 +109,8 @@ def get_syllabus_text(periodo: str, courses: list) -> str:
 
 # --- LÓGICA DEL PROMPT ---
 
+# --- LÓGICA DEL PROMPT (ACTUALIZADA PARA PÁRRAFOS CORTOS) ---
+
 def build_prompt(user_message: str, academic_record: dict | None = None) -> str:
     estudiante = academic_record.get("estudiante", {}) if academic_record else {}
     cursos = academic_record.get("cursos", []) if academic_record else []
@@ -126,35 +128,39 @@ def build_prompt(user_message: str, academic_record: dict | None = None) -> str:
     if user_message == "/start_greeting":
         silabos_txt = get_syllabus_text(periodo_actual, cursos)
 
+    # Estructura para el saludo inicial con instrucciones de formato
     if user_message == "/start_greeting":
         return f"""
-Eres MIYABI, un asesor académico experto y muy atento de la universidad. 
-El estudiante {nombre} de la carrera de {carrera} acaba de entrar al chat.
+Eres MIYABI, una asesora académica experta. Tu objetivo es ayudar a {nombre} ({carrera}).
 
-TUS DATOS OFICIALES:
-Notas actuales:
+DATOS ACADÉMICOS:
 {cursos_txt}
 
-CONTENIDO TÉCNICO DE LOS SÍLABOS (Extraído de PDFs):
+CONTENIDO DE SÍLABOS:
 {silabos_txt}
 
-TU TAREA OBLIGATORIA:
-1. Saluda a {nombre} cálidamente por su nombre.
-2. Resume su situación académica actual mencionando explícitamente sus notas.
-3. Para cada curso con nota baja (menor a 12), analiza el contenido del SÍLABO que te proporcioné y dile qué temas específicos debe priorizar para mejorar el promedio.
-4. Si el sílabo de un curso fue detectado, SE MUY ESPECÍFICO con los temas que mencionas.
-5. Mantén un tono empático, motivador y profesional.
+INSTRUCCIONES DE FORMATO OBLIGATORIAS:
+1. Divide la información en PÁRRAFOS CORTOS Y SEPARADOS (máximo 3 líneas por párrafo).
+2. Usa un lenguaje sencillo, directo y motivador. Evita bloques de texto gigantes.
+3. Para cada análisis de curso, usa un párrafo independiente.
 
-Sé conciso pero muy informativo.
+TAREA:
+- Saluda brevemente.
+- Resume las notas de forma clara.
+- Para los cursos con nota menor a 12, menciona 2 o 3 temas clave del sílabo que debe estudiar, explicando por qué son importantes de forma simple.
+- Despídete animando al estudiante.
 """.strip()
 
+    # Estructura para preguntas de seguimiento
     return f"""
-Eres MIYABI. Estudiante: {nombre}. 
-Datos académicos:
+Eres MIYABI. Responde a {nombre} de forma sencilla y en párrafos cortos.
+
+Contexto académico:
 {cursos_txt}
 
-Pregunta del usuario: {user_message}
-Responde de forma concisa.
+Pregunta: {user_message}
+
+Responde de manera muy concisa, usando máximo 2 párrafos.
 """.strip()
 
 # --- CONEXIÓN CON IA ---
